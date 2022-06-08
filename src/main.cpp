@@ -64,7 +64,7 @@ void loop() {
   Serial.println(buf);
   WiFiClient client;//tcp连接
   const int httpPort=19132;//端口号
-  if(!client.connect(buf,httpPort)){//连接失败
+  if(!client.connect(buf,httpPort)){//连接失败//只有上帝知道这是干什么用的
     Serial.println("connection failed");
     Serial.println(WiFi.localIP());
     return;
