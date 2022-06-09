@@ -26,7 +26,7 @@ struct SS_hostandport//返回值所用的结构体
         .ai_family = AF_INET,           /* 指定返回地址的协议簇，AF_INET(IPv4)、AF_INET6(IPv6)、AF_UNSPEC(IPv4 and IPv6)*/
         .ai_socktype = SOCK_STREAM,     /* 设定返回地址的socket类型，流式套接字 */     
     }; 
-struct SS_hostandport* SS_gethostbyname(const char* name,const char* port,struct SS_hostandport* address)//接受域名、端口和最终存储IP地址和端口的结构体作为参数
+struct SS_hostandport* SS_gethostbyname(const char* name,const char* port,struct SS_hostandport* address)//接受域名、端口和最终存储IP地址和端口的结构体作为参数，如果运行成功就返回SS_hostandport结构体指针，运行失败则将该指针指向NULL
 {
     
     struct addrinfo *result;//用于存储得到的IP地址和端口
