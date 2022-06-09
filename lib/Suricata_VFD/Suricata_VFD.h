@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <SPI.h>
 //arduino  引脚接法,后面数字根据自己设备IO来更改
 
 
@@ -20,7 +21,8 @@ unsigned char  ziku_data[][5]  ={  //字模文件取模应由左下角开始，�
  0x08,0x44,0x26,0x15,0x0c, // 8
  0x14,0x14,0x7f,0x0a,0x0a, // 9
  };
- 
+
+
 
 void spi_write_data(unsigned char w_data)
 {
@@ -39,9 +41,12 @@ void spi_write_data(unsigned char w_data)
         }
         w_data >>= 1;    
         digitalWrite(clk, HIGH);
-        delayMicroseconds(100);  //如果不是ESP32就把这行注释掉。
+        //delayMicroseconds(100);  //如果不是ESP32就把这行注释掉。
     }
 }
+
+
+
 
 void VFD_cmd(unsigned char command)
 {
