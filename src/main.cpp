@@ -47,23 +47,6 @@ void setup()
   {
   Serial.printf("ip:%s\nport:%d",address.SS_host,address.SS_port);
   }
-  // Serial.print("Connected, IP address: ");
-  // Serial.println(WiFi.localIP());//返回ESP8266的IP地址
-  //  struct addrinfo *result;
-  //   int err;
-  //   err = getaddrinfo("kidiota.f3322.net", "19132", &hints, &result);
-  //   if(err != 0)        /* 返回值不为0，函数执行失败*/
-  //       Serial.printf("getaddrinfo err: %d \n",err);
-  //                            /* 用来存储IP地址字符串 */
-  //   struct sockaddr_in  *ipv4 = NULL;   /* IPv4地址结构体指针 */
-  //       if(result->ai_family == AF_INET) 
-  //   {
-  //       ipv4 = (struct sockaddr_in *)result->ai_addr;//将得到的IP地址赋给新的IPv4结构体指针
-  //       inet_ntop(result->ai_family, &ipv4->sin_addr, buf, sizeof(buf));//将接受到的IP地址信息转换成为点分十进制IP地址存入buf字符串
-  //       Serial.printf("[IPv4]%s [port]%d \n",buf,ntohs(ipv4->sin_port));//打印转换后的IP地址和端口号
-  //   }
-  //   else
-  //       Serial.printf("got IPv4 err !!!\n");
 }
 
 void loop() {
