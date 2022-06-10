@@ -100,7 +100,7 @@ void VFD_WriteOneChar(unsigned char x, unsigned char chr)
   (仅适用于英文,标点,数字)
   x:位置;str:要显示的字符串
 *******************************/
-void VFD_WriteStr(unsigned char x, char *str)
+void VFD_WriteStr(unsigned char x, char const *str)
 {
     digitalWrite(cs, LOW);  //开始传输
     spi_write_data(0x20 + x); //地址寄存器起始位置
