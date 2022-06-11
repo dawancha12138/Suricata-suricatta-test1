@@ -9,13 +9,9 @@
 #include <Menu.h>
 using namespace std;
 
-uint8_t EC11_A   = 21;
-uint8_t EC11_B   = 4;
 uint8_t EC_BT =22;//编码器按键
 uint8_t menu_v=0;//模式选择
 int EC = 0;
-bool EC11_A_P = 0;
-bool EC11_B_P = 0;
 bool EC_BT_ST=0;
 uint16_t bright_time = 0;
 const char *ssid1 = "Xiaomi_7C9C";    //首选wifi SSID
@@ -44,59 +40,68 @@ void setup() {
   Serial.print("WiFi ok");
   delay(1000);
   VFD_WriteStr(0,"        ");
-  
+  VFD_Bright(bright);
     
 
 }
 
 void loop() {
   timeClient.update();
-    String str=timeClient.getFormattedTime();
-    char *formattedTime=(char*)str.c_str();
-    if(!digitalRead(EC_BT))
+  String str=timeClient.getFormattedTime();
+  char *formattedTime=(char*)str.c_str();
+  EC_BT_ST=digitalRead(EC_BT);
+  if(!EC_BT_ST)//如果编码器按键被按下
+  {
+    delay(100);
+    Serial.print("123");
+    EC_BT_ST=digitalRead(EC_BT);
+    while(EC_BT_ST)//编码器按键不被按下就继续循环
     {
-        delay(80);
-        while(!digitalRead(EC_BT))
-        {
-        menu_v+=ECV(EC11_A,EC11_B,&EC11_A_P,&EC11_B_P);
-        menu_v%=3;
-        switch (menu_v)//进入菜单调整模式
-        {
-        case 0:
-        VFD_WriteStr(0,"        ");
-        VFD_WriteStr(0,"Time");
-          break;
-        case 1:
-        VFD_WriteStr(0,"        ");
-        VFD_WriteStr(0,"Channel");
-          break;
-        case 2:
-        VFD_WriteStr(0,"        ");
-        VFD_WriteStr(0,"Bright");
-        break;
-        default:
-          break;
-        }
-        }
-    } 
-        switch (menu_v)//依照对应的模式选择应该执行什么代码
-        {
-        case 0:
-        VFD_WriteStr(0,"        ");
-        VFD_WriteStr(0,"Time");
-          break;
-        case 1:
-        VFD_WriteStr(0,"        ");
-        VFD_WriteStr(0,"Channel");
-          break;
-        case 2:
-        VFD_WriteStr(0,"        ");
-        VFD_WriteStr(0,"Bright");
-        break;
-        default:
-          break;
-        }
-    VFD_WriteStr(0, formattedTime);
+    menu_v+=ECV(EC11_A,EC11_B,&EC11_A_P,&EC11_B_P);
+    menu_v%=3;
+    switch (menu_v)//进入菜单调整模式
+    {
+    case 0:
+    VFD_WriteStr(0,"        ");
+    VFD_WriteStr(0,"Time");
+    Serial.print("time");
+      break;
+    case 1:
+    VFD_WriteStr(0,"        ");
+    VFD_WriteStr(0,"Channel");
+    Serial.print("Channel");
+      break;
+    case 2:
+    VFD_WriteStr(0,"        ");
+    VFD_WriteStr(0,"Bright");
+    Serial.print("Bright");
+    break;
+    default:
+      break;
+    }
+    EC_BT_ST=digitalRead(EC_BT);
+    }
+    delay(50);
+  } 
+  switch (menu_v)//依照对应的模式选择应该执行什么代码
+  { 
+  case 0:
+  VFD_WriteStr(0, formattedTime);//如果是时间模式就更新时间
+  Serial.print(formattedTime);
+    break;
+  case 1:
+  VFD_WriteStr(0,"        ");
+  VFD_WriteStr(0,"test");
+  Serial.print("test");
+    break;
+  case 2:
+        Bright(EC_BT,&bright);
+
+  break;
+  default:
+    break;
+  }
+}
   // EC=ECV(EC11_A,EC11_B,&EC11_A_P,&EC11_B_P);
   // bright = bright +EC;
   // if(old_bright != bright){
@@ -132,12 +137,11 @@ void loop() {
   //     bright_time = 0;
   //   }
   //}
-  if(EC_BT)
+  // if(EC_BT)
 
-  if(old_bright == bright){
-    timeClient.update();
-    String str=timeClient.getFormattedTime();
-    char *formattedTime=(char*)str.c_str();
-    VFD_WriteStr(0, formattedTime);
-  }
-}
+  // if(old_bright == bright){
+  //   timeClient.update();
+  //   String str=timeClient.getFormattedTime();
+  //   char *formattedTime=(char*)str.c_str();
+  //   VFD_WriteStr(0, formattedTime);
+  // }
