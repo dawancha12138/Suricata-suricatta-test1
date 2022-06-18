@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <Suricata_VFD.h>
 #include <iostream>
 #include <WiFi.h>
 #include <WiFiUdp.h>
@@ -8,19 +7,11 @@
 #include "esp32-hal-cpu.h"
 #include <Menu.h>
 using namespace std;
-
-uint8_t EC_BT =22;//编码器按键
-uint8_t menu_v=0;//模式选择
-int EC = 0;
-bool EC_BT_ST=0;
 uint16_t bright_time = 0;
 const char *ssid1 = "Xiaomi_7C9C";    //首选wifi SSID
 const char *password1 = "qwer1234";    //首选wifi 密码
-
 WiFiUDP ntpUDP;    //更新时间
 NTPClient timeClient(ntpUDP, "ntp1.aliyun.com",8*60*60, 30*60*1000);    //设置时区
-
-
 void setup() {
   setCpuFrequencyMhz(80);
   pinMode(EC11_A, INPUT_PULLUP);//设置IO口模式
@@ -29,7 +20,7 @@ void setup() {
     Serial.begin(115200);    //串口设置波特率
   VFD_SETUP();    //屏幕初始化
   WiFi.begin(ssid1, password1);    //连接WiFi
-  uint8_t i = 0;  
+  uint8_t i = 0;
   while(WiFi.status() != WL_CONNECTED){    //如果没连上WiFi，执行下列代码
       VFD_WriteStr(i, ".");    //在屏幕上显示一个点
       i = i + 1;    //向后移一位
@@ -41,21 +32,21 @@ void setup() {
   delay(1000);
   VFD_WriteStr(0,"        ");
   VFD_Bright(bright);
-    
-
+  attachInterrupt(EC_BT,Interrupt_EC_BT,RISING);//按下编码器按键即调用Interrupt_EC_BT函数将EC_BT_ST变为1
+  // rtc_wdt_protect_off(); 
+  //  rtc_wdt_enable();          //启用看门狗
+  // rtc_wdt_feed();            //喂狗
+  // rtc_wdt_set_time(RTC_WDT_STAGE0, 7000);     // 设置看门狗超时 7000ms.
 }
-
 void loop() {
   timeClient.update();
   String str=timeClient.getFormattedTime();
   char *formattedTime=(char*)str.c_str();
-  EC_BT_ST=digitalRead(EC_BT);
-  if(!EC_BT_ST)//如果编码器按键被按下
+  if(EC_BT_ST)//如果编码器按键被按下
   {
-    delay(100);
     Serial.print("123");
-    EC_BT_ST=digitalRead(EC_BT);
-    while(EC_BT_ST)//编码器按键不被按下就继续循环
+    EC_BT_ST=0;
+    while(!EC_BT_ST)//编码器按键不被按下就继续循环
     {
     menu_v+=ECV(EC11_A,EC11_B,&EC11_A_P,&EC11_B_P);
     menu_v%=3;
@@ -79,27 +70,28 @@ void loop() {
     default:
       break;
     }
-    EC_BT_ST=digitalRead(EC_BT);
     }
-    delay(50);
-  } 
-  switch (menu_v)//依照对应的模式选择应该执行什么代码
-  { 
-  case 0:
-  VFD_WriteStr(0, formattedTime);//如果是时间模式就更新时间
-  Serial.print(formattedTime);
+    EC_BT_ST=0;
+  }
+  if(!EC_BT_ST)
+  {
+    switch (menu_v)//依照对应的模式选择应该执行什么代码
+    {
+    case 0:
+    VFD_WriteStr(0, formattedTime);//如果是时间模式就更新时间
+    Serial.print(formattedTime);
+      break;
+    case 1:
+    VFD_WriteStr(0,"        ");
+    VFD_WriteStr(0,"test");
+    Serial.print("test");
+      break;
+    case 2:
+          Bright(EC_BT,&bright);
     break;
-  case 1:
-  VFD_WriteStr(0,"        ");
-  VFD_WriteStr(0,"test");
-  Serial.print("test");
-    break;
-  case 2:
-        Bright(EC_BT,&bright);
-
-  break;
-  default:
-    break;
+    default:
+      break;
+    }
   }
 }
   // EC=ECV(EC11_A,EC11_B,&EC11_A_P,&EC11_B_P);
