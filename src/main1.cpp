@@ -8,6 +8,7 @@
 #include <Menu.h>
 using namespace std;
 uint16_t bright_time = 0;
+int oa=0;
 const char *ssid1 = "Xiaomi_7C9C";    //首选wifi SSID
 const char *password1 = "qwer1234";    //首选wifi 密码
 WiFiUDP ntpUDP;    //更新时间
@@ -44,7 +45,7 @@ void loop() {
   char *formattedTime=(char*)str.c_str();
   if(EC_BT_ST)//如果编码器按键被按下
   {
-    Serial.print("123");
+    //Serial.print("123");
     EC_BT_ST=0;
     while(!EC_BT_ST)//编码器按键不被按下就继续循环
     {
@@ -55,17 +56,17 @@ void loop() {
     case 0:
     VFD_WriteStr(0,"        ");
     VFD_WriteStr(0,"Time");
-    Serial.print("time");
+    //Serial.print("time");
       break;
     case 1:
     VFD_WriteStr(0,"        ");
     VFD_WriteStr(0,"Channel");
-    Serial.print("Channel");
+    //Serial.print("Channel");
       break;
     case 2:
     VFD_WriteStr(0,"        ");
     VFD_WriteStr(0,"Bright");
-    Serial.print("Bright");
+    //Serial.print("Bright");
     break;
     default:
       break;
@@ -73,18 +74,19 @@ void loop() {
     }
     EC_BT_ST=0;
   }
+  delay(20);
   if(!EC_BT_ST)
   {
     switch (menu_v)//依照对应的模式选择应该执行什么代码
     {
     case 0:
     VFD_WriteStr(0, formattedTime);//如果是时间模式就更新时间
-    Serial.print(formattedTime);
+    //Serial.print(formattedTime);
       break;
     case 1:
     VFD_WriteStr(0,"        ");
     VFD_WriteStr(0,"test");
-    Serial.print("test");
+    //Serial.print("test");
       break;
     case 2:
           Bright(EC_BT,&bright);
